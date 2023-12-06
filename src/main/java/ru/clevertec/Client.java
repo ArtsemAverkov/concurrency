@@ -7,8 +7,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class Client {
-    private Server server = new Server();
-    private List<Integer> data;
+    private final Server server;
+    private final List<Integer> data;
     private final AtomicInteger accumulator;
     private final ExecutorService executor;
 
@@ -16,18 +16,26 @@ public class Client {
         return data;
     }
 
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
     public AtomicInteger getAccumulator() {
         return accumulator;
     }
 
+
     public Client(int n) {
+
         accumulator = new AtomicInteger(0);
         data = new ArrayList<>();
         for (int i = 1; i <= n; i++) {
             data.add(i);
         }
         executor = Executors.newFixedThreadPool(data.size());
+        server = new Server();
     }
+
 
     public List<Future<Integer>> request() {
         return data.parallelStream()
@@ -53,6 +61,7 @@ public class Client {
         }
         executor.shutdown();
     }
+
 }
 
 
